@@ -2,7 +2,7 @@
 
 A formal grammar-based translation system for **Owens Valley Paiute (OVP)**, a critically endangered Uto-Aztecan language spoken in the Owens Valley of California.
 
-This code is based entirely on the linguistic work of Jared Coleman et al. (USC) as described in their AmericasNLP 2024 paper. The vocabulary, morphological rules, and sentence patterns all originate from their research. This repository applies a formal language approach (ANTLR4 grammar) to the same data as a proof of concept — to explore whether a deterministic, rule-based system can handle the same translation tasks without relying on large language models for the core OVP processing.
+This code is based entirely on the work of Jared Coleman et al. as described in their AmericasNLP 2024 paper. The vocabulary, morphological rules, and sentence patterns all originate from their research. This repository applies a formal language approach (ANTLR4 grammar) to the same data as a proof of concept — to explore whether a deterministic, rule-based system for OVP processing.
 
 ---
 
@@ -269,8 +269,6 @@ These are natural extensions once the corresponding OVP grammatical rules are do
 
 ## Background
 
-The vocabulary, grammar rules, and sentence patterns in this system are derived entirely from the work of Jared Coleman and colleagues at USC, documented in their AmericasNLP 2024 paper. Their original system uses a combination of rule-based morphology and large language models to perform bidirectional OVP ↔ English translation.
-
-This repository is a proof-of-concept reimplementation using a formal grammar approach (ANTLR4), built to explore the hypothesis that deterministic, rule-based tools can handle the same translation tasks more reliably and transparently for a low-resource language like OVP — where LLMs have essentially no training data to draw on. All linguistic credit belongs to Jared Coleman's team.
+The vocabulary, grammar rules, and sentence patterns in this system are derived entirely from the work of Jared Coleman and colleagues, documented in their AmericasNLP 2024 paper. 
 
 **Reference:** Jared Coleman et al., "LLM-Assisted Rule Based Machine Translation for Low/No-Resource Languages," AmericasNLP 2024.
