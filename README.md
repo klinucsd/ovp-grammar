@@ -2,7 +2,7 @@
 
 A formal grammar-based translation system for **Owens Valley Paiute (OVP)**, a critically endangered Uto-Aztecan language spoken in the Owens Valley of California.
 
-This code is based entirely on the work of Jared Coleman et al. as described in their AmericasNLP 2024 paper. The vocabulary, morphological rules, and sentence patterns all originate from their research. This repository applies a formal language approach (ANTLR4 grammar) to the same data as a proof of concept — to explore whether a deterministic, rule-based system for OVP processing.
+This code is based entirely on the work of Jared Coleman et al. as described in their AmericasNLP 2024 paper. The vocabulary, morphological rules, and sentence patterns all originate from their research. This repository applies a formal language approach (ANTLR4 grammar) to the same data as a proof of concept — to explore a deterministic, rule-based system for OVP processing.
 
 ---
 
