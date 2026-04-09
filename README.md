@@ -184,6 +184,74 @@ The English → OVP direction accepts exactly the English words that appear in t
 
 ---
 
+## How OVP → English Translation Works
+
+OVP is morphologically rich: each word carries grammatical information as suffixes and prefixes separated by hyphens. For example:
+
+```
+isha'-uu   pagwi-noka   u-zawa-dü
+ noun-subj  noun-obj    obj_pron-verb-tense
+ coyote-that  fish-that  it-cook(lenited)-present
+→ "That coyote cooks that fish."
+```
+
+Translation proceeds in two steps:
+
+**Step 1 — Parse.** The ANTLR4 grammar (`grammar/OVP.g4`) reads the OVP sentence and builds a parse tree. The grammar knows exactly what morphemes are legal, what order they must appear in, and which combinations are valid. Invalid sentences are rejected immediately with an error — no silent failure.
+
+**Step 2 — Visit.** A Visitor (`src/translator.py`) walks the parse tree node by node. At each node it performs a simple lookup:
+- `isha'` → `NOUN_EN["isha'"]` → `"coyote"`
+- `-uu` → `PROXIMITY["uu"]` → `"That"`
+- `-noka` → `PROXIMITY["noka"]` → `"that"`
+- `zawa` → `VERB_EN["zawa"]` → `"cook"` (lenited form of `sawa`, same English meaning)
+- `-dü` + subject is noun (3rd person singular) → `conjugate("cook", "dü", "3sg")` → `"cooks"`
+
+The sentence structure (SOV vs OVS vs verb-first) is determined by which grammar rule matched, so word order is handled structurally, not by string manipulation.
+
+No English grammar is needed for this direction — OVP's own grammar drives everything.
+
+---
+
+## How English → OVP Translation Works
+
+There is no formal grammar for English in this system. Instead, translation relies on two observations:
+
+1. **The English input is constrained.** We only accept English sentences that express concepts OVP can express — meaning the vocabulary is exactly the set of words in the lexicon (~33 nouns, ~47 verbs, known pronouns and determiners). This makes the English input space finite and fully enumerable.
+
+2. **English sentence structure is simple and regular.** The supported patterns are:
+   - `(This|That) NOUN VERB-PHRASE [(this|that) NOUN].` — noun subject sentence
+   - `PRONOUN VERB-PHRASE [(this|that) NOUN].` — pronoun subject sentence
+
+Given these constraints, translation proceeds in two steps:
+
+**Step 1 — Parse English structurally.** The sentence is split into tokens. The first token identifies the sentence type (determiner → noun subject, known pronoun → pronoun subject). The last two tokens identify whether an object is present. The remaining tokens form the verb phrase.
+
+The verb phrase is parsed by recognising a small set of patterns:
+
+| English verb phrase | Detected as | OVP tense |
+|---|---|---|
+| `cooks` / `cook` | present (3sg or base) | `-dü` |
+| `will cook` | future | `-wei` |
+| `is/am/are cooking` | ongoing | `-ti` |
+| `has/have cooked` | perfect | `-pü` |
+| `cooked` / `saw` / `ate` | past (regular or irregular) | `-ku` |
+| `is going to cook` | going-to future | `-gaa-wei` |
+
+Irregular past and participle forms (saw, eaten, drank, swum, etc.) are resolved through a reverse lookup table built automatically from the lexicon.
+
+**Step 2 — Generate OVP morphology.** Given the parsed structure, OVP is assembled rule by rule:
+- Look up the OVP noun stem from the English noun: `"coyote"` → `"isha'"`
+- Select subject suffix by proximity: `"that"` → `-uu`
+- Look up the OVP verb stem: `"cook"` → `"sawa"` (base form)
+- Apply lenition to the verb stem (always required for transitive verbs): `sawa` → `zawa` (s→z)
+- Select object pronoun prefix by proximity: `"that"` (distal) → `u`
+- Select object suffix: `"fish"` (`pagwi`, no glottal stop, distal) → `-noka`
+- Assemble in OVP word order (SOV for noun subject): `isha'-uu pagwi-noka u-zawa-dü`
+
+Every rule in this process is an explicit, inspectable line of Python code — there is no guessing or probabilistic inference.
+
+---
+
 ## Scope and Limitations
 
 **Currently supported**: simple declarative sentences (subject + verb, or subject + verb + object).
