@@ -1,0 +1,12 @@
+services:
+  ovp-grammar:
+    build: .
+    image: ovp-grammar:latest
+    volumes:
+      # Mount source so edits are reflected without rebuilding
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./grammar:/app/grammar
+    command: bash
+    stdin_open: true
+    tty: true

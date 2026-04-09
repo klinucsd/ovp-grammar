@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# ANTLR4 generates files in a grammar/ subdir when run inside Docker;
+# the correct copies are at src/generated/*.py (not src/generated/grammar/)
+src/generated/grammar/
